@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Навигация с вкладками</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-4">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">Список пользователей</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="${/admin/addNewUser}">Добавить нового пользователя</a>
+        </li>
+    </ul>
+
+    <!-- Контент вкладок -->
+    <div class="tab-content mt-3">
+        <div class="tab-pane fade show active" id="userList">
+            <h4>Список пользователей</h4>
+            <!-- Здесь можно разместить контент списка пользователей -->
+        </div>
+        <div class="tab-pane fade" id="addUser">
+            <h4>Добавить нового пользователя</h4>
+            <!-- Здесь можно разместить форму для добавления нового пользователя -->
+        </div>
+    </div>
+</div>
+
+<!-- Подключение jQuery и Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Пример переключения вкладок
+    $(document).ready(function() {
+        $('.nav-link').on('click', function() {
+            $('.nav-link').removeClass('active');
+            $(this).addClass('active');
+
+            // Скрываем все вкладки
+            $('.tab-pane').removeClass('show active');
+
+            // Показываем соответствующую вкладку
+            if ($(this).text() === 'Список пользователей') {
+                $('#userList').addClass('show active');
+            } else if ($(this).text() === 'Добавить нового пользователя') {
+                $('#addUser').addClass('show active');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
