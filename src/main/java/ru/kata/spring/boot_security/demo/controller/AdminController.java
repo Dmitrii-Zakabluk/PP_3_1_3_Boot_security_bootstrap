@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +19,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -33,24 +36,36 @@ public class AdminController {
     }
 
     @GetMapping("")
-    public String showAllUsers(Model model) {
+    public String showAllUsers(Model model, Principal principal) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<User> allUsers = userService.getAllUsers();
+        User user =  userService.findUserByUsername(principal.getName());
         model.addAttribute("allUsers", allUsers);
+        model.addAttribute("user", user);
         return "all_users";
     }
 
+    @GetMapping("/user")
+    public String showUsers(Model model, Principal principal) {
+        User user = userService.findUserByUsername(principal.getName());
+        model.addAttribute("user", user);
+        return "user";
+    }
+
     @GetMapping("/addNewUser")
-    public String addNewUser(Model model) {
+    public String addNewUser(Model model, Principal principal) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("showModal", true);
         model.addAttribute("user", new User());
         model.addAttribute("roles", roleService.getRoles());
-        return "user_info";
+        model.addAttribute("userInfo", userDetails);
+        return "add_new_user_page";
     }
 
     @PostMapping("/saveUser")
     public String saveUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "user_info";
+            return "add_new_user_page";
         }
         try {
             userService.saveUser(user);
@@ -77,14 +92,14 @@ public class AdminController {
     }
 
     @PostMapping("/updateUser")
-    public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String updateUser(@ModelAttribute("user") @Valid User user,BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "user_info"; // Вернуть на форму редактирования с ошибками
+            return "user_info";
         }
         try {
-            userService.updateUser(user); // Предполагается, что у вас есть метод updateUser в userService
+            userService.updateUser(user);
             redirectAttributes.addFlashAttribute("successMessage", "User updated successfully");
-            return "redirect:/admin/"; // Перенаправление на список пользователей
+            return "redirect:/admin/";
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/admin/";

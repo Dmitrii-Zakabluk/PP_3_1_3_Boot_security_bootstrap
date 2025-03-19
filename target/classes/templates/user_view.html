@@ -9,7 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
-    <title>Все пользователи</title>
+    <title>Пользователь</title>
+
 </head>
 <body>
 <nav class="navbar fixed-top" style="background-color: #383737; color: #ffffff;">
@@ -18,11 +19,11 @@
             <a class="navbar-brand" style="color: #ffffff;">
                 <!-- Отображение имени пользователя -->
                 <span th:if="${user}">
-                    <strong th:text="${user.getEmail}"></strong>
+                    <strong th:text="${user.getEmail()}"></strong>
                 </span>
                 <span th:if="${user}" th:text="' с правами: '"></span>
                 <span th:if="${user.getAuthorities() != null}" th:each="role : ${user.authorities}"
-                      th:text="${role.authority.replace('ROLE_', '')} + ' '"></span>
+                      th:text="${role.authority.replace('ROLE_', '') + ' '}"></span>
             </a>
         </div>
         <div>
@@ -31,7 +32,7 @@
     </div>
 </nav>
 <div class="container-fluid gx-0" style="margin-top: 55px;">
-    <div class="row g-0" style="height: 100vh;">
+    <div class="row g-0">
         <div class="col-md-4 col-lg-2 navbar-container bg-light">
             <!-- Вертикальное меню -->
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -44,10 +45,7 @@
                     <!-- Пункты вертикального меню -->
                     <ul class="nav nav-pills flex-column w-100">
                         <li class="nav-item w-100">
-                            <a class="nav-link active w-100" href="/admin/">Администратор</a>
-                        </li>
-                        <li class="nav-item w-100">
-                            <a class="nav-link w-100" href="/admin/user">Пользователь</a>
+                            <a class="nav-link active w-100">Пользователь</a>
                         </li>
                     </ul>
                 </div>
@@ -55,71 +53,47 @@
         </div>
         <div class="col-md-8 col-lg-10 content-container gx-5" style="background-color: #f0f0f0">
             <h2 class="text-left small-title" style="font-size: 40px;">
-                <strong>Панель администратора</strong>
+                <strong>Информация о пользователе</strong>
             </h2>
             <div th:if="${errorMessage}" style="color: red;">
                 <p th:text="${errorMessage}"></p>
             </div>
-            <div class="container-fluid">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/admin">Таблица пользователей</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/addNewUser">Добавить пользователя</a>
-                    </li>
-                </ul>
-                <h4 class="container-fluid text-left small-title border w-100 lh-lg my-0">Список пользователей</h4>
+
+            <h4 class="container-fluid text-left w-100 lh-lg my-0">Данные пользователя
                 <!-- Таблица пользователей -->
-                <table class="table table-hover border">
+                <table class="table table-hover border" style="font-size: 15px;">
                     <thead>
                     <tr>
                         <th class="align-middle">ID</th>
                         <th class="align-middle">Имя</th>
                         <th class="align-middle">Фамилия</th>
                         <th class="align-middle">Возраст</th>
-                        <th class="align-middle">Адрес электронной почты</th>
-                        <th class="align-middle">Права доступа</th>
-                        <th class="align-middle">Изменить</th>
-                        <th class="align-middle">Удалить</th>
+                        <th class="align-middle">Email</th>
+                        <th class="align-middle">Уровень доступа</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="user : ${allUsers}">
+                    <tr th:each="user : ${user}">
                         <td th:text="${user.id}"></td>
                         <td th:text="${user.name}"></td>
                         <td th:text="${user.surname}"></td>
                         <td th:text="${user.age}"></td>
                         <td th:text="${user.email}"></td>
                         <td class="roles-cell">
-                            <a th:each="role:${user.getRoles()}" th:text="${role.getName().replace('ROLE_', ' ')}"></a>
-                        </td>
-                        <td>
-                            <form th:action="@{/admin/updateInfo?userId=${user.id}}" method="get">
-                                <input type="hidden" name="userId" th:value="${user.id}"/>
-                                <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#userModal"
-                                        style="background-color: #008080; color: white; outline: none; border: none;" autocomplete="on">
-                                    Изменить
-                                </button>
-                            </form>
-                        </td>
-                        <td>
-                            <form th:action="@{/admin/deleteUser}" method="post"
-                                  onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                <input type="hidden" name="userId" th:value="${user.id}"/>
-                                <button type="submit" class="btn btn-danger" style="color: white; outline: none; border: none;" autocomplete="off">
-                                    Удалить
-                                </button>
-                            </form>
+                            <a th:each="role:${user.getRoles()}"
+                               th:text="${role.getName().replace('ROLE_', ' ')}"></a>
                         </td>
                     </tr>
                     </tbody>
                 </table>
-            </div>
+            </h4>
+            <br/>
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Подключение Bootstrap JS и jQuery (обязательно для работы навигации) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>

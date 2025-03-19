@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
@@ -27,7 +26,6 @@ import java.util.Set;
 
 @Setter
 @Entity
-@Data
 @Table(name = "users")
 public class User implements UserDetails {
 
@@ -74,6 +72,7 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id")
 
     )
+
     private Set<Role> roles = new HashSet<>();
 
     public User() {
